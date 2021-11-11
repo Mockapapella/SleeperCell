@@ -1,0 +1,2 @@
+# What is this?
+Sleeper Cell is an exploit that abuses zero width characters in Unicode to discretely embed full length programs in the comments of other programs. This on its own is rather harmless, but when you use a decoder on a seemingly harmless file it allows you to run the exploit.
