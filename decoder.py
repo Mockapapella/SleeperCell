@@ -1,5 +1,4 @@
 from pathlib import Path
-import binascii
 
 def bitstring_to_bytes(encoded_exploit):
     exploit2int = int(encoded_exploit, 2)

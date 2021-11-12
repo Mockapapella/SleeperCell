@@ -1,6 +1,3 @@
-"""
-This file is
-"""
 from pathlib import Path
 import pyperclip
 
@@ -34,11 +31,10 @@ with open(EXPLOIT_FILE, "r+", encoding="utf8") as file:
 for hex in exploit_code:
     BINARY_STRING += HEX2BINARY[hex]
 
-for character in BINARY_STRING:
-    if character == "1":
-        BINARY_STRING = BINARY_STRING.replace(character, "\u200B")
-    elif character == "0":
-        BINARY_STRING = BINARY_STRING.replace(character, "\u200C")
+print(BINARY_STRING)
+
+BINARY_STRING = BINARY_STRING.replace("1", "\u200B")
+BINARY_STRING = BINARY_STRING.replace("0", "\u200C")
 
 BINARY_STRING = HEADER + BINARY_STRING + FOOTER
 
