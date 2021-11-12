@@ -1,46 +1,46 @@
+"""
+This file is
+"""
 from pathlib import Path
+import pyperclip
 
-filename = Path("exploit.py")
-with open(filename, "r+", encoding="utf8") as file:
-    file = file.read()
-print("#" * 40 + " FILE CONTENTS " + 40 * "#")
-print(file)
+HEX2BINARY = {
+    "0": "0000",
+    "1": "0001",
+    "2": "0010",
+    "3": "0011",
+    "4": "0100",
+    "5": "0101",
+    "6": "0110",
+    "7": "0111",
+    "8": "1000",
+    "9": "1001",
+    "a": "1010",
+    "b": "1011",
+    "c": "1100",
+    "d": "1101",
+    "e": "1110",
+    "f": "1111",
+}
+HEX_STRING = ""
+BINARY_STRING = ""
+HEADER = "\u200B\u200B\u200B\u200B\u200B\u200B\u200B\u200B"
+FOOTER = "\u200C\u200C\u200C\u200C\u200C\u200C\u200C\u200C"
+EXPLOIT_FILE = Path("exploit.py")
 
-dictionary = {"0": "0000",
-            "1": "0001",
-            "2": "0010",
-            "3": "0011",
-            "4": "0100",
-            "5": "0101",
-            "6": "0110",
-            "7": "0111",
-            "8": "1000",
-            "9": "1001",
-            "a": "1010",
-            "b": "1011",
-            "c": "1100",
-            "d": "1101",
-            "e": "1110",
-            "f": "1111"}
+with open(EXPLOIT_FILE, "r+", encoding="utf8") as file:
+    exploit_code = file.read().encode().hex()
 
-command = file.encode().hex()
+for hex in exploit_code:
+    BINARY_STRING += HEX2BINARY[hex]
 
-command = [command[i : i + 2] for i in range(0, len(command), 2)]
-print("#" * 40 + " EACH CHARACTER CONVERTED TO HEX " + 40 * "#")
-print(command)
-hex_string = ""
-binary_string = ""
-for hexadec in command:
-    hex_string += hexadec
-for hexadec in hex_string:
-    binary_string += dictionary[hexadec]
-print(binary_string)
+for character in BINARY_STRING:
+    if character == "1":
+        BINARY_STRING = BINARY_STRING.replace(character, "\u200B")
+    elif character == "0":
+        BINARY_STRING = BINARY_STRING.replace(character, "\u200C")
 
-command = "\\x" + "\\x".join(command)
-print("#" * 40 + " CONVERTED TO BYTESTRING " + 40 * "#")
-print(command)
-print(type(command))
+BINARY_STRING = HEADER + BINARY_STRING + FOOTER
 
-command = command.encode("ascii").decode("unicode-escape")
-print("#" * 40 + " EXECUTE BYTESTRING " + 40 * "#")
-exec(command)
+pyperclip.copy(BINARY_STRING)
+print("The exploit has been copied to your clipboard.")

